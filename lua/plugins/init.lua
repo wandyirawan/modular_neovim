@@ -12,7 +12,6 @@ return {
 	{ import = "plugins.git" },
 	{ import = "plugins.completion" },
 	{ import = "plugins.ui" },
-	{ import = "plugins.codeutilss" },
-
+	{ import = "plugins.codeutils" },
 	-- Plugin lainnya bisa ditambahkan di sini
 }
