@@ -1,4 +1,5 @@
 -- [[ Setting options ]]
+
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
@@ -36,17 +37,3 @@ vim.opt.expandtab = true
 -- Set colorcolumn at 80 characters
 vim.opt.colorcolumn = "80"
 vim.cmd([[highlight ColorColumn ctermbg=235 guibg=#303030]])
--- Atur tabline agar hanya muncul jika ada >1 tab
-vim.o.showtabline = 1 -- 0=never, 1=hanya jika >1 tab, 2=selalu
-
--- Fungsi kustom untuk tabline (opsional, bisa disesuaikan)
-local function my_tabline()
-	local tabs = {}
-	for i = 1, vim.fn.tabpagenr("$") do
-		local is_active = i == vim.fn.tabpagenr()
-		table.insert(tabs, (is_active and "%#TabLineSel#" or "%#TabLine#") .. " " .. i .. " ")
-	end
-	return table.concat(tabs, "") .. "%#TabLineFill#"
-end
-
-vim.o.tabline = "%!v:lua.my_tabline()" -- Set tabline ke fungsi Lua

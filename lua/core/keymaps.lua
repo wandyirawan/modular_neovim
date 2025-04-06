@@ -1,7 +1,8 @@
 -- [[ Basic Keymaps ]]
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 -- Tambahkan keymaps lainnya di sini
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+
+-- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 vim.keymap.set("v", "N", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "E", ":m '<-2<CR>gv=gv")
@@ -11,10 +12,11 @@ vim.keymap.set("n", "<leader>tc", ":tabclose<CR>", { desc = "Close Tab" }) -- Tu
 vim.keymap.set("n", "<leader>to", ":tabonly<CR>", { desc = "Close Other Tabs" }) -- Tutup semua tab kecuali yang aktif
 
 -- Navigasi tab
-vim.keymap.set("n", "<Tab>", "gt", { desc = "Next Tab" }) -- Pindah ke tab berikutnya (gt)
-vim.keymap.set("n", "<S-Tab>", "gT", { desc = "Previous Tab" }) -- Pindah ke tab sebelumnya (gT)
-vim.keymap.set("n", "<leader>1", "1gt", { desc = "Go to Tab 1" }) -- Pindah ke Tab 1
-vim.keymap.set("n", "<leader>2", "2gt", { desc = "Go to Tab 2" }) -- Pindah ke Tab 2
+vim.keymap.set("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New Tab" })
+vim.keymap.set("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close Tab" })
+vim.keymap.set("n", "<leader>to", "<cmd>tabonly<CR>", { desc = "Close Other Tabs" })
+vim.keymap.set("n", "<Tab>", "<cmd>tabnext<CR>", { desc = "Next Tab" })
+vim.keymap.set("n", "<S-Tab>", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
 -- ... dan seterusnya hingga <leader>9
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true, silent = true }

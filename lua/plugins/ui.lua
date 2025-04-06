@@ -250,4 +250,149 @@ return {
 			end,
 		},
 	},
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
+		cmd = "Neotree",
+		keys = {
+			{ "<leader>ne", "<cmd>Neotree toggle position=right<CR>", desc = "Toggle Neo-tree (right)" },
+			{
+
+				"<leader>pv",
+				function()
+					require("neo-tree.command").execute({
+						source = "filesystem",
+						toggle = true,
+						reveal = true,
+						dir = vim.loop.cwd(),
+						position = "float",
+					})
+				end,
+				desc = "Project View (float)",
+			},
+		},
+		init = function()
+			-- ⛔ Disable netrw
+			vim.g.loaded_netrw = 1
+			vim.g.loaded_netrwPlugin = 1
+
+			-- 🧩 Replace `:Ex`, `:Vex`, `:Sex` with neo-tree
+			vim.api.nvim_create_user_command("Ex", function()
+				require("neo-tree.command").execute({ source = "filesystem", toggle = true, position = "float" })
+			end, {})
+
+			vim.api.nvim_create_user_command("Vex", function()
+				require("neo-tree.command").execute({ source = "filesystem", toggle = true, position = "right" })
+			end, {})
+
+			vim.api.nvim_create_user_command("Sex", function()
+				require("neo-tree.command").execute({ source = "filesystem", toggle = true, position = "float" })
+			end, {})
+
+			-- 🚀 Auto open if started with folder
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					if vim.fn.argc() == 1 then
+						local arg = vim.fn.argv()[1]
+						if vim.fn.isdirectory(arg) == 1 then
+							require("neo-tree.command").execute({
+								source = "filesystem",
+								toggle = true,
+								reveal = true,
+								position = "float",
+								dir = vim.loop.cwd(),
+							})
+						end
+					end
+				end,
+			})
+		end,
+		config = function()
+			require("neo-tree").setup({
+				close_if_last_window = true,
+				enable_git_status = true,
+				enable_diagnostics = true,
+				default_component_configs = {
+
+					icon = {
+						folder_closed = "",
+
+						folder_open = "",
+						folder_empty = "",
+						default = "",
+						highlight = "NeoTreeFileIcon",
+					},
+				},
+				window = {
+					mappings = {
+						-- Canary movement (E=Up, N=Down)
+
+						["e"] = "prev_source", -- Up (Canary)
+						["n"] = "next_source", -- Down (Canary)
+
+						["i"] = "toggle_node", -- Expand/Collapse (Canary-friendly)
+						["l"] = "open", -- Open file/folder
+						["h"] = "close_node", -- Close folder
+						-- Optional: Keep HJKL-like keys for splits
+						["v"] = "open_vsplit", -- Vertical split
+						["s"] = "open_split", -- Horizontal split
+						-- File operations (Canary-friendly positions)
+						["a"] = "add", -- Add file/folder
+						["d"] = "delete", -- Delete
+						["r"] = "rename", -- Rename
+						["y"] = "copy", -- Yank (copy)
+						["x"] = "cut_to_clipboard", -- Cut (valid command
+						["p"] = "paste_from_clipboard", -- Paste (valid command)
+
+						-- === Search/Splits ===
+						["/"] = "filter_as_you_type", -- Filter files (valid command)
+						-- Other useful mappings
+						["?"] = "show_help", -- Tampilkan bantuan
+						-- Tambahkan mapping untuk menjalankan command mode
+						[":"] = function()
+							-- Tutup neo-tree float sementara
+							vim.cmd("Neotree close")
+
+							-- Jalankan command mode
+							vim.defer_fn(function()
+								vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(":", true, false, true), "n", true)
+							end, 10)
+						end,
+
+						-- Tambahkan mapping lain yang mungkin Anda butuhkan
+						["!"] = function()
+							-- Tutup neo-tree float sementara
+							vim.cmd("Neotree close")
+
+							-- Jalankan shell command
+							vim.defer_fn(function()
+								vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("!", true, false, true), "n", true)
+							end, 10)
+						end,
+					},
+
+					popup = {
+						size = {
+							height = "100%",
+							width = "100%",
+						},
+						position = "50%",
+					},
+				},
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						hide_dotfiles = false,
+						hide_gitignored = false,
+					},
+				},
+			})
+		end,
+	},
 }

@@ -87,4 +87,16 @@ return {
 		ft = { "sql", "mysql", "plsql" },
 		cmd = { "DB", "DBUI", "DBUIToggle" },
 	},
+	{
+		"mbbill/undotree",
+		keys = {
+			{ "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Toggle Undotree" },
+		},
+		config = function()
+			vim.g.undotree_SetFocusWhenToggle = 1
+
+			vim.g.undotree_WindowLayout = 2 -- atau 3, cobain sesuai selera
+			vim.g.undotree_SplitWidth = 40
+		end,
+	},
 }

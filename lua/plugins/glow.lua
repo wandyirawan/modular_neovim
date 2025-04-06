@@ -45,20 +45,20 @@ return {
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = "markdown",
 			callback = function()
-				vim.keymap.set("n", "<leader>pv", ":MarkdownPreview<CR>", {
+				vim.keymap.set("n", "<leader>prv", ":MarkdownPreview<CR>", {
 					buffer = true,
 					silent = true,
 					noremap = true,
 					desc = "Preview markdown in browser",
 				})
 
-				vim.keymap.set("n", "<leader>ps", ":MarkdownPreviewStop<CR>", {
+				vim.keymap.set("n", "<leader>prs", ":MarkdownPreviewStop<CR>", {
 					buffer = true,
 					silent = true,
 					noremap = true,
 					desc = "Stop markdown preview",
 				})
-				vim.keymap.set("n", "<leader>pt", ":MarkdownPreviewToggle<CR>", {
+				vim.keymap.set("n", "<leader>prt", ":MarkdownPreviewToggle<CR>", {
 					buffer = true,
 					silent = true,
 					noremap = true,
