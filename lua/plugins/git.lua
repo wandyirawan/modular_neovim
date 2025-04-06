@@ -100,6 +100,13 @@ return {
 						gs.diffthis("~")
 					end, { buffer = bufnr, desc = "Diff this ~" })
 					vim.keymap.set("n", "<leader>td", gs.toggle_deleted, { buffer = bufnr, desc = "Toggle deleted" })
+					-- Open diff
+					vim.keymap.set("n", "<leader>hx", function()
+						require("gitsigns").diffthis("~1")
+					end, { desc = "Diff Against HEAD~1" })
+
+					-- Close diff (just quit the current window)
+					vim.keymap.set("n", "<leader>hq", "<cmd>q<CR>", { desc = "Close Diff Window" })
 				end,
 			})
 		end,

@@ -13,5 +13,8 @@ return {
 	{ import = "plugins.completion" },
 	{ import = "plugins.ui" },
 	{ import = "plugins.codeutils" },
+	{ import = "plugins.gopher" },
+	{ import = "plugins.ufo" },
+	{ import = "plugins.zen" },
 	-- Plugin lainnya bisa ditambahkan di sini
 }

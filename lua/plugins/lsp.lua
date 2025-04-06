@@ -63,6 +63,7 @@ return {
 			vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "Show references" })
 			vim.keymap.set("n", "gI", vim.lsp.buf.implementation, { desc = "Go to implementation" })
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
+			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 
 			-- Setup autocompletion
 			local cmp = require("cmp")

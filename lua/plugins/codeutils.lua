@@ -65,4 +65,26 @@ return {
 			require("codeium").setup({})
 		end,
 	},
+	{
+		"tpope/vim-dadbod",
+		dependencies = {
+			"kristijanhusak/vim-dadbod-ui",
+			"kristijanhusak/vim-dadbod-completion",
+			{
+				"kristijanhusak/vim-dadbod-ui",
+				init = function()
+					-- Mapping untuk membuka UI
+					vim.g.db_ui_use_nerd_fonts = 1
+					vim.g.db_ui_show_database_icon = 1
+					vim.keymap.set("n", "<leader>dui", ":DBUIToggle<CR>", { silent = true, desc = "Toggle DB UI" })
+				end,
+			},
+			{
+				"kristijanhusak/vim-dadbod-completion",
+				ft = { "sql", "mysql", "plsql" },
+			},
+		},
+		ft = { "sql", "mysql", "plsql" },
+		cmd = { "DB", "DBUI", "DBUIToggle" },
+	},
 }
