@@ -54,6 +54,7 @@ return {
 
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 			lspconfig.ts_ls.setup({ capabilities = capabilities })
+			lspconfig.gopls.setup({ capabilities = capabilities })
 
 			-- Global mappings
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })

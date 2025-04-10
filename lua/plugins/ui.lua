@@ -127,20 +127,29 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
-
 		dependencies = {
-
 			"MunifTanjim/nui.nvim",
 			"rcarriga/nvim-notify",
 		},
-
 		config = function()
+			-- Simpan fungsi notify asli
+			local original_notify = vim.notify
+
+			-- Override notify biar Neo-tree gak ganggu
+			vim.notify = function(msg, level, opts)
+				if msg:match("neo%-tree") and (level == vim.log.levels.WARN or level == vim.log.levels.INFO) then
+					return
+				end
+				original_notify(msg, level, opts)
+			end
+
 			require("notify").setup({
+
 				background_colour = "#1e222a",
 			})
+
 			require("noice").setup({
 				lsp = {
-					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 					override = {
 						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 						["vim.lsp.util.stylize_markdown"] = true,
@@ -153,15 +162,125 @@ return {
 						enabled = true,
 					},
 				},
-				-- you can enable a preset for easier configuration
+
 				presets = {
-					bottom_search = true, -- use a classic bottom cmdline for search
-					command_palette = true, -- position the cmdline and popupmenu together
-					long_message_to_split = true, -- long messages will be sent to a split
-					inc_rename = false, -- enables an input dialog for inc-rename.nvim
-					lsp_doc_border = true, -- add a border to hover docs and signature help
+					bottom_search = true,
+					command_palette = true,
+					long_message_to_split = true,
+					inc_rename = false,
+
+					lsp_doc_border = true,
 				},
 			})
+
+			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
+
+			-- vim.notify = original_notify
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		config = function()
+			-- Simpan fungsi notify asli
+			local original_notify = vim.notify
+
+			-- Override notify biar Neo-tree gak ganggu
+			vim.notify = function(msg, level, opts)
+				if msg:match("neo%-tree") and (level == vim.log.levels.WARN or level == vim.log.levels.INFO) then
+					return
+				end
+				original_notify(msg, level, opts)
+			end
+
+			require("notify").setup({
+
+				background_colour = "#1e222a",
+			})
+
+			require("noice").setup({
+				lsp = {
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+					signature = {
+						enabled = true,
+					},
+					hover = {
+						enabled = true,
+					},
+				},
+
+				presets = {
+					bottom_search = true,
+					command_palette = true,
+					long_message_to_split = true,
+					inc_rename = false,
+
+					lsp_doc_border = true,
+				},
+			})
+
+			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
+
+			-- vim.notify = original_notify
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		config = function()
+			local original_notify = vim.notify
+			vim.notify = function(msg, level, opts)
+				if msg:find("Neo%-tree WARN") then
+					return
+				end
+				original_notify(msg, level, opts)
+			end
+
+			require("notify").setup({
+
+				background_colour = "#1e222a",
+			})
+
+			require("noice").setup({
+				lsp = {
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+					signature = {
+						enabled = true,
+					},
+					hover = {
+						enabled = true,
+					},
+				},
+
+				presets = {
+					bottom_search = true,
+					command_palette = true,
+					long_message_to_split = true,
+					inc_rename = false,
+
+					lsp_doc_border = true,
+				},
+			})
+
+			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
+
+			-- vim.notify = original_notify
 		end,
 	},
 
@@ -333,8 +452,8 @@ return {
 					mappings = {
 						-- Canary movement (E=Up, N=Down)
 
-						["e"] = "prev_source", -- Up (Canary)
-						["n"] = "next_source", -- Down (Canary)
+						["e"] = "up", -- Up (Canary)
+						["n"] = "down", -- Down (Canary)
 
 						["i"] = "toggle_node", -- Expand/Collapse (Canary-friendly)
 						["l"] = "open", -- Open file/folder
@@ -351,8 +470,7 @@ return {
 						["p"] = "paste_from_clipboard", -- Paste (valid command)
 
 						-- === Search/Splits ===
-						["/"] = "filter_as_you_type", -- Filter files (valid command)
-						-- Other useful mappings
+						["/"] = "fuzzy_finder", -- Correct filter command						-- Other useful mappings
 						["?"] = "show_help", -- Tampilkan bantuan
 						-- Tambahkan mapping untuk menjalankan command mode
 						[":"] = function()
