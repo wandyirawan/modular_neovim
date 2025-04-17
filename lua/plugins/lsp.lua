@@ -18,7 +18,7 @@ return {
 					"lua_ls", -- Lua
 					"rust_analyzer", -- Rust
 					"ts_ls", -- TypeScript/JavaScript
-					"pyright", -- Python
+					"pylsp", -- Python
 					"gopls", -- Go
 					-- dll
 				},
@@ -30,6 +30,7 @@ return {
 					"black", -- Python
 					"isort", -- Python
 					"shfmt", -- Shell
+					"djlint",
 					-- dll
 				},
 			})
@@ -55,14 +56,30 @@ return {
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 			lspconfig.ts_ls.setup({ capabilities = capabilities })
 			lspconfig.gopls.setup({ capabilities = capabilities })
+			-- pyright untuk full Python LSP
+			lspconfig.pylsp.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+			})
+
+			-- ruff-lsp hanya untuk diagnostics tambahan
+			lspconfig.ruff.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+			})
 
 			-- Global mappings
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions" })
+			vim.keymap.set("n", "gd", require("telescope.builtin").lsp_definitions, { desc = "Go to definition" })
+			vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references, { desc = "Show references" })
+			vim.keymap.set(
+				"n",
+				"gI",
+				require("telescope.builtin").lsp_implementations,
+				{ desc = "Go to implementation" }
+			)
 
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-			vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "Show references" })
-			vim.keymap.set("n", "gI", vim.lsp.buf.implementation, { desc = "Go to implementation" })
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 

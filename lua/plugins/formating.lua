@@ -21,8 +21,9 @@ return {
 
 				svelte = { "prettier" },
 				css = { "prettier" },
-				html = { "prettier" },
-
+				html = { "djlint" },
+				htmldjango = { "djlint" },
+				jinja = { "djlint" },
 				json = { "prettier" },
 				yaml = { "prettier" },
 				markdown = { "prettier" },

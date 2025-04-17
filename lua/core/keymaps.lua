@@ -6,6 +6,10 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 vim.keymap.set("v", "N", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "E", ":m '<-2<CR>gv=gv")
+vim.keymap.set("n", "Z", "mzJ`z")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
 -- Shortcut untuk manajemen tab
 vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "New Tab" }) -- Buat tab baru
 vim.keymap.set("n", "<leader>tc", ":tabclose<CR>", { desc = "Close Tab" }) -- Tutup tab saat ini
@@ -18,23 +22,24 @@ vim.keymap.set("n", "<leader>to", "<cmd>tabonly<CR>", { desc = "Close Other Tabs
 vim.keymap.set("n", "<Tab>", "<cmd>tabnext<CR>", { desc = "Next Tab" })
 vim.keymap.set("n", "<S-Tab>", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
 -- ... dan seterusnya hingga <leader>9
+-- Ganti map() agar bisa multiple mode (pakai vim.keymap.set)
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true, silent = true }
 	if opts then
 		options = vim.tbl_extend("force", options, opts)
 	end
-	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+	vim.keymap.set(mode, lhs, rhs, options)
 end
 
 -- Vim for Colemak
--- map("", "m", "h", {})
+map("", "m", "h", {})
 map("", "n", "j", {})
 map("", "e", "k", {})
 map("", "i", "l", {})
 map("", "j", "e", {})
 map("", "k", "n", {})
 map("", "l", "i", {})
-map("o", "r", "i", {})
+map({ "o", "v" }, "u", "i", {})
 
 -- Shortcut for quiting and saving
 map("", "Q", ":q<cr>", {})

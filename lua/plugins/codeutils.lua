@@ -98,5 +98,20 @@ return {
 			vim.g.undotree_WindowLayout = 2 -- atau 3, cobain sesuai selera
 			vim.g.undotree_SplitWidth = 40
 		end,
+		{
+			"christoomey/vim-tmux-navigator",
+			lazy = false, -- Load plugin immediately (not lazy-loaded)
+			keys = { -- Define keymaps here
+				{ "<C-h>", "<cmd>TmuxNavigateLeft<CR>", desc = "Pindah ke window kiri" },
+				{ "<C-j>", "<cmd>TmuxNavigateDown<CR>", desc = "Pindah ke window bawah" },
+				{ "<C-k>", "<cmd>TmuxNavigateUp<CR>", desc = "Pindah ke window atas" },
+				{ "<C-l>", "<cmd>TmuxNavigateRight<CR>", desc = "Pindah ke window kanan" },
+				{ "<C-\\>", "<cmd>TmuxNavigatePrevious<CR>", desc = "Pindah ke window sebelumnya" },
+			},
+			config = function()
+				-- Optional: Non-default settings (jika diperlukan)
+				vim.g.tmux_navigator_no_mappings = 1 -- Biarkan Lazy.nvim handle keymaps
+			end,
+		},
 	},
 }
