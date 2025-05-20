@@ -20,6 +20,8 @@ return {
 					"ts_ls", -- TypeScript/JavaScript
 					"pylsp", -- Python
 					"gopls", -- Go
+					"omnisharp",
+					"nextls",
 					-- dll
 				},
 			})
@@ -31,6 +33,7 @@ return {
 					"isort", -- Python
 					"shfmt", -- Shell
 					"djlint",
+					"csharpier",
 					-- dll
 				},
 			})
@@ -56,6 +59,7 @@ return {
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 			lspconfig.ts_ls.setup({ capabilities = capabilities })
 			lspconfig.gopls.setup({ capabilities = capabilities })
+			lspconfig.nextls.setup({ capabilities = capabilities })
 			-- pyright untuk full Python LSP
 			lspconfig.pylsp.setup({
 				capabilities = capabilities,
@@ -68,6 +72,7 @@ return {
 				on_attach = on_attach,
 			})
 
+			lspconfig.omnisharp.setup({ capabilities = capabilities })
 			-- Global mappings
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions" })

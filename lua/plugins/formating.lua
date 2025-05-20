@@ -33,10 +33,11 @@ return {
 				go = { "goimports-revise", "gofmt", "goline" },
 				java = { "google-java-format" },
 				rust = { "rustfmt" },
-				c = { "clang-format" },
 				cpp = { "clang-format" },
 				sh = { "shfmt" },
 				sql = { "sql_formatter" },
+				cs = { "csharpier" },
+				elixir = { "mix" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

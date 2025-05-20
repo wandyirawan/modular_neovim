@@ -32,15 +32,15 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- Vim for Colemak
-map("", "m", "h", {})
-map("", "n", "j", {})
-map("", "e", "k", {})
-map("", "i", "l", {})
-map("", "j", "e", {})
-map("", "k", "n", {})
-map("", "l", "i", {})
+map({ "n", "o", "v" }, "m", "h", {})
+map({ "n", "o", "v" }, "n", "j", {})
+map({ "n", "o", "v" }, "e", "k", {})
+map({ "n", "o", "v" }, "i", "l", {})
+map({ "n", "o", "v" }, "j", "e", {})
+map({ "n", "o", "v" }, "k", "n", {})
+map({ "n", "o", "v" }, "l", "i", {})
 map({ "o", "v" }, "u", "i", {})
-
+map({ "n", "o", "v" }, "h", "<Nop>", { silent = true })
 -- Shortcut for quiting and saving
 map("", "Q", ":q<cr>", {})
 map("", "S", ":w<cr>", {})
