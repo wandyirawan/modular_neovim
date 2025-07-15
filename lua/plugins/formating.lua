@@ -29,7 +29,7 @@ return {
 				markdown = { "prettier" },
 				graphql = { "prettier" },
 				lua = { "stylua" },
-				python = { "isort", "ruff", "autoflake" },
+				python = { "isort", "ruff", "black" },
 				go = { "goimports-revise", "gofmt", "goline" },
 				java = { "google-java-format" },
 				rust = { "rustfmt" },

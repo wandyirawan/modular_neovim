@@ -18,10 +18,9 @@ return {
 					"lua_ls", -- Lua
 					"rust_analyzer", -- Rust
 					"ts_ls", -- TypeScript/JavaScript
-					"pylsp", -- Python
 					"gopls", -- Go
+					"pyright", -- Python
 					"omnisharp",
-					"nextls",
 					-- dll
 				},
 			})
@@ -29,8 +28,8 @@ return {
 				ensure_installed = {
 					"stylua", -- Lua
 					"prettier", -- JS/TS/HTML/CSS
+					"ruff", -- Python
 					"black", -- Python
-					"isort", -- Python
 					"shfmt", -- Shell
 					"djlint",
 					"csharpier",
@@ -59,12 +58,11 @@ return {
 			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
 			lspconfig.ts_ls.setup({ capabilities = capabilities })
 			lspconfig.gopls.setup({ capabilities = capabilities })
-			lspconfig.nextls.setup({ capabilities = capabilities })
 			-- pyright untuk full Python LSP
-			lspconfig.pylsp.setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
+			-- lspconfig.pyright.setup({
+			-- 	capabilities = capabilities,
+			-- 	on_attach = on_attach,
+			-- })
 
 			-- ruff-lsp hanya untuk diagnostics tambahan
 			lspconfig.ruff.setup({
