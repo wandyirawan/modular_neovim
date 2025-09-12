@@ -4,18 +4,13 @@ vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
-vim.keymap.set("v", "N", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "E", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "Z", "mzJ`z")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 -- Shortcut untuk manajemen tab
-vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "New Tab" }) -- Buat tab baru
-vim.keymap.set("n", "<leader>tc", ":tabclose<CR>", { desc = "Close Tab" }) -- Tutup tab saat ini
-vim.keymap.set("n", "<leader>to", ":tabonly<CR>", { desc = "Close Other Tabs" }) -- Tutup semua tab kecuali yang aktif
-
--- Navigasi tab
 vim.keymap.set("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "New Tab" })
 vim.keymap.set("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close Tab" })
 vim.keymap.set("n", "<leader>to", "<cmd>tabonly<CR>", { desc = "Close Other Tabs" })
@@ -29,17 +24,38 @@ local function map(mode, lhs, rhs, opts)
 	vim.keymap.set(mode, lhs, rhs, options)
 end
 
--- Global var: layout saat ini
-vim.g.keyboard_layout = vim.g.keyboard_layout or "canary"
+local layout_file = vim.fn.stdpath("cache") .. "/nvim_layout"
 
--- Bersihkan mapping sebelumnya
+-- Baca layout terakhir dari file (kalau ada)
+local function read_layout()
+	local f = io.open(layout_file, "r")
+	if f then
+		local layout = f:read("*l")
+		f:close()
+		if layout == "canary" or layout == "galium" then
+			return layout
+		end
+	end
+	return "canary" -- default fallback
+end
+
+-- Simpan layout ke file
+local function write_layout(layout)
+	local f = io.open(layout_file, "w")
+	if f then
+		f:write(layout)
+		f:close()
+	end
+end
+
+-- Global var: layout saat ini (load from file)
+vim.g.keyboard_layout = read_layout()
+
+-- Bersihkan mapping sebelumnya (improved efficiency)
 local function unmap_keys(keys)
 	for _, key in ipairs(keys) do
 		for _, mode in ipairs({ "n", "o", "v" }) do
-			local existing = vim.fn.maparg(key, mode)
-			if existing ~= "" then
-				pcall(vim.keymap.del, mode, key)
-			end
+			pcall(vim.keymap.del, mode, key)
 		end
 	end
 end
@@ -67,37 +83,12 @@ local function setup_galium()
 	map({ "n", "o", "v" }, "e", "l", {})
 	map({ "n", "o", "v" }, "j", "e", {})
 	map({ "n", "o", "v" }, "k", "n", {})
-	map({ "n", "o", "v" }, "l", "i", {})
+	map({ "n", "v" }, "l", "a", {}) -- l = append after cursor
+	map({ "n", "v" }, "L", "A", {}) -- L = append at end of line
 	map({ "o", "v" }, "u", "i", {})
-	-- khusus di galium: remap insert key
-	map({ "n", "v" }, "i", "a", {})
-	map({ "n", "v" }, "I", "A", {})
+	-- i tetap sebagai insert mode (tidak diremap)
 	map({ "n", "v" }, ",", "p", {})
 	map({ "n", "v" }, "<", "P", {})
-end
-
-local layout_file = vim.fn.stdpath("cache") .. "/nvim_layout"
-
--- Baca layout terakhir dari file (kalau ada)
-local function read_layout()
-	local f = io.open(layout_file, "r")
-	if f then
-		local layout = f:read("*l")
-		f:close()
-		if layout == "canary" or layout == "galium" then
-			return layout
-		end
-	end
-	return "canary" -- default fallback
-end
-
--- Simpan layout ke file
-local function write_layout(layout)
-	local f = io.open(layout_file, "w")
-	if f then
-		f:write(layout)
-		f:close()
-	end
 end
 
 -- Layout switcher
@@ -127,6 +118,21 @@ apply_layout()
 -- Tambahkan command dan keymap
 vim.api.nvim_create_user_command("ToggleLayout", toggle_layout, {})
 map("n", "<leader>kl", toggle_layout, { desc = "Toggle Keyboard Layout" })
+
+-- Enhanced error navigation
+vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic to location list" })
+vim.keymap.set("n", "<leader>df", function()
+	vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
+end, { desc = "Show diagnostic in float" })
+
+-- Better file path display in command line
+vim.keymap.set("n", "<leader>fp", function()
+	local filepath = vim.fn.expand("%:p")
+	local relative = vim.fn.expand("%:~:.")
+	vim.notify("Full path: " .. filepath .. "\nRelative: " .. relative, vim.log.levels.INFO)
+end, { desc = "Show file path" })
 
 -- Save/quit shortcut
 map("", "Q", ":q<cr>", {})

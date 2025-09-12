@@ -7,6 +7,8 @@ return {
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			"hrsh7th/nvim-cmp",
 			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 		},
@@ -15,35 +17,43 @@ return {
 			require("mason").setup()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					"lua_ls", -- Lua
+					"lua_ls", -- Neovim config
+					"gopls", -- Go - primary
 					"rust_analyzer", -- Rust
-					"ts_ls", -- TypeScript/JavaScript
-					"gopls", -- Go
-					"pyright", -- Python
-					"omnisharp",
-					-- dll
+					"pyright", -- Python intellisense  
+					"ruff", -- Python linting (faster)
+					"ts_ls", -- Node.js/TypeScript
+					"elixirls", -- Elixir
 				},
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = {
-					"stylua", -- Lua
-					"prettier", -- JS/TS/HTML/CSS
-					"ruff", -- Python
-					"black", -- Python
-					"shfmt", -- Shell
-					"djlint",
-					"csharpier",
-					-- dll
+					-- Core formatters only
+					"stylua", -- Lua config
+					"goimports", -- Go import management
+					"gofmt", -- Go formatting
+					"rustfmt", -- Rust formatting  
+					"ruff", -- Python all-in-one
+					"prettier", -- JS/TS/JSON formatting
+					-- Remove: black, isort, mypy, shfmt, djlint, csharpier, sql-formatter
 				},
 			})
 
 			-- LSP settings
 			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			
+			-- Setup navic for breadcrumb navigation
+			local on_attach = function(client, bufnr)
+				if client.server_capabilities.documentSymbolProvider then
+					require("nvim-navic").attach(client, bufnr)
+				end
+			end
 
 			-- LSP servers setup
 			lspconfig.lua_ls.setup({
 				capabilities = capabilities,
+				on_attach = on_attach,
 				settings = {
 					Lua = {
 						diagnostics = {
@@ -53,24 +63,73 @@ return {
 				},
 			})
 
-			-- Setup other LSP servers
+			-- Go LSP (primary focus)
+			lspconfig.gopls.setup({ 
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					gopls = {
+						gofumpt = true,
+						usePlaceholders = true,
+						analyses = {
+							unusedparams = true,
+						},
+					},
+				},
+			})
 
-			lspconfig.rust_analyzer.setup({ capabilities = capabilities })
-			lspconfig.ts_ls.setup({ capabilities = capabilities })
-			lspconfig.gopls.setup({ capabilities = capabilities })
-			-- pyright untuk full Python LSP
-			-- lspconfig.pyright.setup({
-			-- 	capabilities = capabilities,
-			-- 	on_attach = on_attach,
-			-- })
+			-- Rust LSP
+			lspconfig.rust_analyzer.setup({ 
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					["rust-analyzer"] = {
+						checkOnSave = {
+							command = "cargo clippy",
+						},
+					},
+				},
+			})
 
-			-- ruff-lsp hanya untuk diagnostics tambahan
-			lspconfig.ruff.setup({
+			-- TypeScript/Node.js LSP
+			lspconfig.ts_ls.setup({ 
 				capabilities = capabilities,
 				on_attach = on_attach,
 			})
+			
+			-- Python LSP - pyright untuk intellisense
+			lspconfig.pyright.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					python = {
+						analysis = {
+							autoSearchPaths = true,
+							useLibraryCodeForTypes = true,
+							diagnosticMode = "workspace",
+							typeCheckingMode = "basic",
+						},
+					},
+				},
+			})
 
-			lspconfig.omnisharp.setup({ capabilities = capabilities })
+			-- Ruff LSP untuk fast linting/formatting  
+			lspconfig.ruff.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				init_options = {
+					settings = {
+						args = {},
+					},
+				},
+			})
+
+			-- Elixir LSP
+			lspconfig.elixirls.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				cmd = { vim.fn.expand("~/.local/share/nvim/mason/bin/elixir-ls") },
+			})
 			-- Global mappings
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions" })
@@ -84,7 +143,6 @@ return {
 			)
 
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
-			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 
 			-- Setup autocompletion
 			local cmp = require("cmp")
@@ -110,8 +168,10 @@ return {
 					end, { "i", "s" }),
 				}),
 				sources = {
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
+					{ name = "nvim_lsp", priority = 1000 },
+					{ name = "luasnip", priority = 750 },
+					{ name = "buffer", priority = 500 },
+					{ name = "path", priority = 250 },
 				},
 			})
 		end,

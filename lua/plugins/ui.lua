@@ -1,5 +1,22 @@
 -- lua/plugins/ui.lua
 return {
+	-- Breadcrumb navigation
+	{
+		"SmiteshP/nvim-navic",
+		dependencies = "neovim/nvim-lspconfig",
+		event = "LspAttach",
+		opts = {
+			lsp = {
+				auto_attach = true,
+			},
+			highlight = true,
+			separator = " > ",
+			depth_limit = 0,
+			depth_limit_indicator = "..",
+			safe_output = true,
+			click = true,
+		},
+	},
 	-- Color scheme
 	{
 		"catppuccin/nvim",
@@ -179,6 +196,27 @@ return {
 				"filename",
 				cond = conditions.buffer_not_empty,
 				color = { fg = colors.magenta, gui = "bold" },
+				path = 1, -- 0 = just filename, 1 = relative path, 2 = absolute path
+				shorting_target = 40, -- shorten path if too long
+				symbols = {
+					modified = '[+]',
+					readonly = '[RO]',
+					unnamed = '[No Name]',
+				}
+			})
+
+			-- Current working directory
+			ins_left({
+				function()
+					local cwd = vim.fn.getcwd()
+					local home = os.getenv("HOME")
+					if cwd:find(home, 1, true) == 1 then
+						return " ~" .. cwd:sub(#home + 1)
+					end
+					return " " .. vim.fn.fnamemodify(cwd, ":t")
+				end,
+				color = { fg = colors.cyan },
+				cond = conditions.hide_in_width,
 			})
 
 			ins_left({ "location" })
@@ -194,6 +232,19 @@ return {
 					warn = { fg = colors.yellow },
 					info = { fg = colors.cyan },
 				},
+			})
+
+			-- Breadcrumb navigation with navic
+			ins_left({
+				function()
+					local navic = require("nvim-navic")
+					if navic.is_available() then
+						return navic.get_location()
+					end
+					return ""
+				end,
+				color = { fg = colors.cyan },
+				cond = conditions.hide_in_width,
 			})
 
 			-- Insert mid section. You can make any number of sections in neovim :)
@@ -293,6 +344,7 @@ return {
 	{
 		"goolord/alpha-nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+		event = "VimEnter",
 		config = function()
 			local alpha = require("alpha")
 			local dashboard = require("alpha.themes.dashboard")
@@ -333,10 +385,7 @@ return {
 			"rcarriga/nvim-notify",
 		},
 		config = function()
-			-- Simpan fungsi notify asli
 			local original_notify = vim.notify
-
-			-- Override notify biar Neo-tree gak ganggu
 			vim.notify = function(msg, level, opts)
 				if msg:match("neo%-tree") and (level == vim.log.levels.WARN or level == vim.log.levels.INFO) then
 					return
@@ -345,7 +394,6 @@ return {
 			end
 
 			require("notify").setup({
-
 				background_colour = "#1e222a",
 			})
 
@@ -363,125 +411,14 @@ return {
 						enabled = true,
 					},
 				},
-
 				presets = {
 					bottom_search = true,
 					command_palette = true,
 					long_message_to_split = true,
 					inc_rename = false,
-
 					lsp_doc_border = true,
 				},
 			})
-
-			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
-
-			-- vim.notify = original_notify
-		end,
-	},
-	{
-		"folke/noice.nvim",
-		event = "VeryLazy",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
-		},
-		config = function()
-			-- Simpan fungsi notify asli
-			local original_notify = vim.notify
-
-			-- Override notify biar Neo-tree gak ganggu
-			vim.notify = function(msg, level, opts)
-				if msg:match("neo%-tree") and (level == vim.log.levels.WARN or level == vim.log.levels.INFO) then
-					return
-				end
-				original_notify(msg, level, opts)
-			end
-
-			require("notify").setup({
-
-				background_colour = "#1e222a",
-			})
-
-			require("noice").setup({
-				lsp = {
-					override = {
-						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-						["vim.lsp.util.stylize_markdown"] = true,
-						["cmp.entry.get_documentation"] = true,
-					},
-					signature = {
-						enabled = true,
-					},
-					hover = {
-						enabled = true,
-					},
-				},
-
-				presets = {
-					bottom_search = true,
-					command_palette = true,
-					long_message_to_split = true,
-					inc_rename = false,
-
-					lsp_doc_border = true,
-				},
-			})
-
-			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
-
-			-- vim.notify = original_notify
-		end,
-	},
-	{
-		"folke/noice.nvim",
-		event = "VeryLazy",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
-		},
-		config = function()
-			local original_notify = vim.notify
-			vim.notify = function(msg, level, opts)
-				if msg:find("Neo%-tree WARN") then
-					return
-				end
-				original_notify(msg, level, opts)
-			end
-
-			require("notify").setup({
-
-				background_colour = "#1e222a",
-			})
-
-			require("noice").setup({
-				lsp = {
-					override = {
-						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-						["vim.lsp.util.stylize_markdown"] = true,
-						["cmp.entry.get_documentation"] = true,
-					},
-					signature = {
-						enabled = true,
-					},
-					hover = {
-						enabled = true,
-					},
-				},
-
-				presets = {
-					bottom_search = true,
-					command_palette = true,
-					long_message_to_split = true,
-					inc_rename = false,
-
-					lsp_doc_border = true,
-				},
-			})
-
-			-- (opsional) bisa balikin original_notify kalau mau stop filter-nya
-
-			-- vim.notify = original_notify
 		end,
 	},
 
@@ -615,21 +552,27 @@ return {
 				require("neo-tree.command").execute({ source = "filesystem", toggle = true, position = "float" })
 			end, {})
 
-			-- 🚀 Auto open if started with folder
+			-- 🚀 Auto open if started with folder (defer to avoid conflicting with alpha)
 			vim.api.nvim_create_autocmd("VimEnter", {
 				callback = function()
-					if vim.fn.argc() == 1 then
-						local arg = vim.fn.argv()[1]
-						if vim.fn.isdirectory(arg) == 1 then
-							require("neo-tree.command").execute({
-								source = "filesystem",
-								toggle = true,
-								reveal = true,
-								position = "float",
-								dir = vim.loop.cwd(),
-							})
+					-- Small delay to let alpha load first
+					vim.defer_fn(function()
+						if vim.fn.argc() == 1 then
+							local arg = vim.fn.argv()[1]
+							if vim.fn.isdirectory(arg) == 1 then
+								require("neo-tree.command").execute({
+									source = "filesystem",
+									toggle = true,
+									reveal = true,
+									position = "float",
+									dir = vim.loop.cwd(),
+								})
+							end
+						elseif vim.fn.argc() == 0 and vim.fn.line('$') == 1 and vim.fn.getline(1) == '' then
+							-- Show alpha if no arguments and empty buffer
+							require("alpha").start()
 						end
-					end
+					end, 10)
 				end,
 			})
 		end,

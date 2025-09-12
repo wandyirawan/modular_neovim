@@ -14,12 +14,12 @@ return {
 		})
 
 		-- keymaps contoh
-		vim.keymap.set("n", "<leader>a", function()
+		vim.keymap.set("n", "<leader>ha", function()
 			harpoon:list():add()
-		end, { desc = "Add file to Harpoon" })
-		vim.keymap.set("n", "<leader>h", function()
+		end, { desc = "Harpoon: Add file" })
+		vim.keymap.set("n", "<leader>hm", function()
 			harpoon.ui:toggle_quick_menu(harpoon:list())
-		end, { desc = "Toggle Harpoon UI" })
+		end, { desc = "Harpoon: Menu" })
 
 		vim.keymap.set("n", "<C-n>", function()
 			harpoon:list():select(1)

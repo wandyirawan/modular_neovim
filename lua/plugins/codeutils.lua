@@ -1,50 +1,36 @@
 return {
 	{
 		"numToStr/Comment.nvim",
+		keys = {
+			{ "gcc", desc = "Comment toggle current line" },
+			{ "gc", mode = { "n", "o" }, desc = "Comment toggle linewise" },
+			{ "gc", mode = "x", desc = "Comment toggle linewise (visual)" },
+			{ "gbc", desc = "Comment toggle current block" },
+			{ "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
+			{ "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
+		},
 		opts = {
-			---Add a space b/w comment and the line
 			padding = true,
-			---Whether the cursor should stay at its position
 			sticky = true,
-			---Lines to be ignored while (un)comment
 			ignore = nil,
-			---LHS of toggle mappings in NORMAL mode
 			toggler = {
-				---Line-comment toggle keymap
 				line = "gcc",
-				---Block-comment toggle keymap
 				block = "gbc",
 			},
-			---LHS of operator-pending mappings in NORMAL and VISUAL mode
 			opleader = {
-				---Line-comment keymap
 				line = "gc",
-				---Block-comment keymap
 				block = "gb",
 			},
-			---LHS of extra mappings
 			extra = {
-				---Add comment on the line above
 				above = "gcO",
-				---Add comment on the line below
 				below = "gco",
-				---Add comment at the end of line
 				eol = "gcA",
 			},
-			---Enable keybindings
-			---NOTE: If given `false` then the plugin won't create any mappings
 			mappings = {
-				---Operator-pending mapping; `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
 				basic = true,
-				---Extra mapping; `gco`, `gcO`, `gcA`
 				extra = true,
 			},
-			---Function to call before (un)comment
-			pre_hook = nil,
-			---Function to call after (un)comment
-			post_hook = nil,
 		},
-		lazy = false,
 	},
 	{
 		"rhysd/vim-clang-format",
@@ -90,17 +76,15 @@ return {
 	},
 	{
 		"christoomey/vim-tmux-navigator",
-		lazy = false, -- Load plugin immediately (not lazy-loaded)
-		keys = { -- Define keymaps here
-			{ "<C-h>", "<cmd>TmuxNavigateLeft<CR>", desc = "Pindah ke window kiri" },
-			{ "<C-j>", "<cmd>TmuxNavigateDown<CR>", desc = "Pindah ke window bawah" },
-			{ "<C-k>", "<cmd>TmuxNavigateUp<CR>", desc = "Pindah ke window atas" },
-			{ "<C-l>", "<cmd>TmuxNavigateRight<CR>", desc = "Pindah ke window kanan" },
-			{ "<C-\\>", "<cmd>TmuxNavigatePrevious<CR>", desc = "Pindah ke window sebelumnya" },
+		keys = {
+			{ "<C-h>", "<cmd>TmuxNavigateLeft<CR>", desc = "Navigate to left pane" },
+			{ "<C-j>", "<cmd>TmuxNavigateDown<CR>", desc = "Navigate to bottom pane" },
+			{ "<C-k>", "<cmd>TmuxNavigateUp<CR>", desc = "Navigate to top pane" },
+			{ "<C-l>", "<cmd>TmuxNavigateRight<CR>", desc = "Navigate to right pane" },
+			{ "<C-\\>", "<cmd>TmuxNavigatePrevious<CR>", desc = "Navigate to previous pane" },
 		},
 		config = function()
-			-- Optional: Non-default settings (jika diperlukan)
-			vim.g.tmux_navigator_no_mappings = 1 -- Biarkan Lazy.nvim handle keymaps
+			vim.g.tmux_navigator_no_mappings = 1
 		end,
 	},
 	{
@@ -249,5 +233,42 @@ return {
 				desc = "Quickfix List (Trouble)",
 			},
 		},
+	},
+	-- Essential: nvim-surround for text surrounding
+	{
+		"kylechui/nvim-surround",
+		version = "*", -- Use for stability; omit to use `main` branch for the latest features
+		event = "VeryLazy",
+		config = function()
+			require("nvim-surround").setup({
+				-- Configuration here, or leave empty to use defaults
+			})
+		end,
+	},
+	-- Essential: Color highlighter
+	{
+		"norcalli/nvim-colorizer.lua",
+		event = "BufReadPre",
+		config = function()
+			require("colorizer").setup({
+				"*", -- Highlight all files, but customize for specific filetypes
+				css = { rgb_fn = true }, -- Enable parsing rgb(...) functions in css
+				html = { names = false }, -- Disable parsing "names" like Blue or Gray
+			})
+		end,
+	},
+	-- Inline diagnostics - show errors directly in code
+	{
+		"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+		event = "LspAttach",
+		config = function()
+			require("lsp_lines").setup()
+			-- Disable default virtual text to avoid duplication
+			vim.diagnostic.config({
+				virtual_text = false,
+			})
+			-- Toggle keybinding
+			vim.keymap.set("n", "<leader>ll", require("lsp_lines").toggle, { desc = "Toggle LSP Lines" })
+		end,
 	},
 }

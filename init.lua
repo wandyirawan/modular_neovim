@@ -1,3 +1,6 @@
+-- Performance: Enable vim.loader for faster startup
+vim.loader.enable()
+
 -- Atur leader key di awal, sebelum memuat lazy.nvim
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
