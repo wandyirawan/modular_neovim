@@ -1,0 +1,31 @@
+{
+  "HTTP Handler": {
+    "prefix": "httphandler",
+    "body": [
+      "func ${1:handlerName}(w http.ResponseWriter, r *http.Request) {",
+      "\t${2:// handler logic}",
+      "\tw.WriteHeader(http.StatusOK)",
+      "\tfmt.Fprintf(w, \"${3:response}\")",
+      "}"
+    ],
+    "description": "HTTP handler function"
+  },
+  "Error handling": {
+    "prefix": "iferr",
+    "body": [
+      "if err != nil {",
+      "\t${1:return err}",
+      "}"
+    ],
+    "description": "if err != nil block"
+  },
+  "Goroutine": {
+    "prefix": "go",
+    "body": [
+      "go func() {",
+      "\t${1:// goroutine logic}",
+      "}()"
+    ],
+    "description": "Anonymous goroutine"
+  }
+}

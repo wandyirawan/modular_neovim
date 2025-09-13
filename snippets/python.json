@@ -1,0 +1,40 @@
+{
+  "Class with __init__": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName}:",
+      "\tdef __init__(self${2:, args}):",
+      "\t\t${3:pass}",
+      "",
+      "\tdef ${4:method_name}(self):",
+      "\t\t${5:pass}"
+    ],
+    "description": "Class definition with __init__"
+  },
+  "FastAPI route": {
+    "prefix": "fastapi",
+    "body": [
+      "@app.${1:get}(\"${2:/path}\")",
+      "async def ${3:function_name}():",
+      "\t${4:return {\"message\": \"Hello World\"}}"
+    ],
+    "description": "FastAPI route handler"
+  },
+  "List comprehension": {
+    "prefix": "lc",
+    "body": [
+      "[${1:expression} for ${2:item} in ${3:iterable}${4: if ${5:condition}}]"
+    ],
+    "description": "List comprehension"
+  },
+  "Try except": {
+    "prefix": "try",
+    "body": [
+      "try:",
+      "\t${1:# try block}",
+      "except ${2:Exception} as ${3:e}:",
+      "\t${4:# handle exception}"
+    ],
+    "description": "Try except block"
+  }
+}
