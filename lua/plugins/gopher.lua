@@ -8,8 +8,6 @@ return {
 		},
 		config = function()
 			require("gopher").setup({
-				-- You can customize the gopher settings here
-				-- These are the defaults
 				commands = {
 					go = "go",
 					gomodifytags = "gomodifytags",
@@ -18,28 +16,50 @@ return {
 					iferr = "iferr",
 				},
 			})
-			-- Add JSON tags
-			vim.keymap.set("n", "<leader>gt", "<cmd>GoTagAdd json<CR>", {
-				buffer = true,
-				silent = true,
-				noremap = true,
-				desc = "Add JSON tags to struct",
-			})
-
-			-- Add YAML tags
-			vim.keymap.set("n", "<leader>gy", "<cmd>GoTagAdd yaml<CR>", {
-				buffer = true,
-				silent = true,
-				noremap = true,
-				desc = "Add YAML tags to struct",
-			})
-
-			-- Remove tags
-			vim.keymap.set("n", "<leader>gr", "<cmd>GoTagRm<CR>", {
-				buffer = true,
-				silent = true,
-				noremap = true,
-				desc = "Remove tags from struct",
+			-- Go-specific keymaps (only for Go files)
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "go",
+				callback = function()
+					local opts = { buffer = true, silent = true, noremap = true }
+					
+					-- Struct tags
+					vim.keymap.set("n", "<leader>gtj", "<cmd>GoTagAdd json<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Add JSON tags" }))
+					vim.keymap.set("n", "<leader>gty", "<cmd>GoTagAdd yaml<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Add YAML tags" }))
+					vim.keymap.set("n", "<leader>gtd", "<cmd>GoTagAdd db<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Add DB tags" }))
+					vim.keymap.set("n", "<leader>gtr", "<cmd>GoTagRm<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Remove tags" }))
+					
+					-- Code generation
+					vim.keymap.set("n", "<leader>gie", "<cmd>GoIfErr<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Generate if err" }))
+					vim.keymap.set("n", "<leader>gim", "<cmd>GoImpl<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Generate interface implementation" }))
+					
+					-- Tests
+					vim.keymap.set("n", "<leader>gtt", "<cmd>GoTestAdd<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Generate tests for function" }))
+					vim.keymap.set("n", "<leader>gta", "<cmd>GoTestsAll<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Generate tests for all functions" }))
+					vim.keymap.set("n", "<leader>gte", "<cmd>GoTestsExp<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Generate tests for exported functions" }))
+					
+					-- Go commands
+					vim.keymap.set("n", "<leader>gbr", ":!go run %<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Run current file" }))
+					vim.keymap.set("n", "<leader>gbb", ":!go build<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Build project" }))
+					vim.keymap.set("n", "<leader>gbt", ":!go test ./...<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Run all tests" }))
+					vim.keymap.set("n", "<leader>gbv", ":!go test -v ./...<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Run tests verbose" }))
+					vim.keymap.set("n", "<leader>gbc", ":!go test -cover ./...<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Run tests with coverage" }))
+					vim.keymap.set("n", "<leader>gbm", ":!go mod tidy<CR>", 
+						vim.tbl_extend("force", opts, { desc = "Go mod tidy" }))
+				end,
 			})
 		end,
 		build = function()
